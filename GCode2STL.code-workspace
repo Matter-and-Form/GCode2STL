@@ -84,7 +84,12 @@
 			"queue": "cpp",
 			"stack": "cpp",
 			"__bit_reference": "cpp",
-			"__string": "cpp"
-		}
+			"__string": "cpp",
+			"regex": "cpp",
+			"filesystem": "cpp"
+		},
+		"editor.defaultFormatter": "ms-vscode.cpptools",
+		"editor.formatOnPaste": true,
+		"editor.formatOnSave": true
 	}
 }

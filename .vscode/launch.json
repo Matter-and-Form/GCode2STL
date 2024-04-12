@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/GCode2STL", // Change this to your output executable
-            "args": ["/home/drew/Documents/NGEN/GCode to STL/pig_lowpoly_2023-09-18T15-03-09.417Z.gcode", "/home/drew/Documents/NGEN/GCode to STL/pig.ply"], // Add your arguments here
+            "args": ["/home/drew/data/NGen/50Pieces/GCode/10_Twisted-Vase-Basic.gcode", "/home/drew/Documents/NGEN/GCode to STL/10_Twisted-Vase-Basic.ply"], // Add your arguments here
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
