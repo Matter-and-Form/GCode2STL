@@ -1,11 +1,13 @@
 # GCode to STL/PLY Converter
 ## Overview
-This repository contains a C++ application designed to convert GCode files into 3D printable STL or PLY files. It interprets the paths in the GCode as extruded lines, which are then rendered as square tubes using specified layer height and extrusion width parameters. This tool is especially useful for visualizing GCode paths in 3D modeling software or verifying the tool paths before 3D printing.
+This repository contains a C++ application designed to convert GCode files into 3D printable STL or PLY files. It interprets the extruded paths in the GCode, and then renders them each as square tubes using specified layer height and extrusion width parameters. This tool is especially useful for visualizing GCode paths in 3D modeling software. The tool does not currently try to output a STL that mimics the input. If you'd like this feature please drop a comment or submit a PR. 
 
 ## Features
 Convert GCode to STL or PLY: Outputs either STL or PLY files based on the paths defined in a GCode file.
 Extruded Lines as Square Tubes: Converts the extruded lines into square tubes, making use of the layer height and a user-definable extrusion width.
-No Dependencies: This project does not rely on any external libraries, making it easy to build and run on any platform supporting C++.
+
+#### No Dependencies
+This project does not rely on any external libraries, making it easy to build and run on any platform supporting C++.
 
 ## Usage
 To use this tool, you need to specify the path to the input GCode file, the output file path for the STL or PLY file, and optionally the extrusion width (default is 0.4mm).
