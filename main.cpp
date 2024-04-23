@@ -5,6 +5,12 @@
 #include <random>
 #include <regex>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cassert>
+
+float extrusionWidth = 0.4f;
 
 // Define a simple structure for a 3D point.
 class Point3D
@@ -67,6 +73,23 @@ public:
 
         // Return the angle
         return angleRadians;
+    }
+
+    struct XYZ
+    {
+        float x, y, z;
+    };
+
+    // Operator to cast to XYZ*
+    operator char *()
+    {
+        return reinterpret_cast<char *>(this);
+    }
+
+    // Const version of the operator to cast to const XYZ*
+    operator const char *() const
+    {
+        return reinterpret_cast<const char *>(this);
     }
 };
 
@@ -173,7 +196,7 @@ Mesh createOrthogonalSquares(const std::vector<PointPair> &path, float height, f
     Mesh layerMesh;
     float halfWidth = width / 2.0f;
     float halfHeight = height / 2.0f;
-    const float maxMiterLength = 10.0f;
+    const float maxMiterLength = 1.4f;
     if (path.size() == 1)
         throw "size is 1";
     // return layerMesh; // Need at least two points to define a direction
@@ -402,7 +425,7 @@ std::vector<Mesh> extract3DPointsFromLayers(const std::vector<Layer> &layers)
             {
                 previousZ = 0;
             }
-            pointLayers.push_back(createOrthogonalSquares(points, (currentZ - previousZ), 0.4f));
+            pointLayers.push_back(createOrthogonalSquares(points, (currentZ - previousZ), extrusionWidth));
         }
     }
 
@@ -467,23 +490,102 @@ void savePointsToPLY(const std::vector<Mesh> &layers, const std::string &filePat
     plyFile.close();
 }
 
+void savePointsToSTL(const std::vector<Mesh> &layers, const std::string &filePath)
+{
+    std::ofstream stlFile(filePath, std::ios::out | std::ios::binary);
+
+    if (!stlFile.is_open())
+    {
+        std::cerr << "Failed to create STL file: " << filePath << std::endl;
+        return;
+    }
+
+    char header[80] = {};
+    stlFile.write(header, sizeof(header)); // Write empty header
+
+    unsigned int totalTriangles = 0;
+    for (const auto &mesh : layers)
+    {
+        assert(mesh.indices.size() % 4 == 0);
+        totalTriangles += mesh.indices.size() / 2;
+    }
+
+    stlFile.write(reinterpret_cast<char *>(&totalTriangles), sizeof(totalTriangles));
+    unsigned short attributeByteCount = 0; // No attribute byte count
+
+    for (const auto &mesh : layers)
+    {
+        for (size_t i = 0; i < mesh.indices.size(); i += 4)
+        {
+
+            auto p1 = mesh.vertices[mesh.indices[i]];
+            auto p2 = mesh.vertices[mesh.indices[i + 1]];
+            auto p3 = mesh.vertices[mesh.indices[i + 2]];
+            auto p4 = mesh.vertices[mesh.indices[i + 3]];
+
+            // Placeholder normal
+
+            Point3D normal = (p1 - p2).cross(p3 - p2);
+            stlFile.write(normal, sizeof(Point3D::XYZ));
+            stlFile.write(p1, sizeof(Point3D::XYZ));
+            stlFile.write(p2, sizeof(Point3D::XYZ));
+            stlFile.write(p3, sizeof(Point3D::XYZ));
+            stlFile.write(reinterpret_cast<char *>(&attributeByteCount), sizeof(attributeByteCount));
+
+            stlFile.write(normal, sizeof(Point3D::XYZ));
+            stlFile.write(p3, sizeof(Point3D::XYZ));
+            stlFile.write(p4, sizeof(Point3D::XYZ));
+            stlFile.write(p1, sizeof(Point3D::XYZ));
+            stlFile.write(reinterpret_cast<char *>(&attributeByteCount), sizeof(attributeByteCount));
+        }
+    }
+
+    stlFile.close();
+}
+
+bool endsWith(const std::string &mainStr, const std::string &toMatch)
+{
+    if (mainStr.length() >= toMatch.length())
+    {
+        return (0 == mainStr.compare(mainStr.length() - toMatch.length(), toMatch.length(), toMatch));
+    }
+    else
+    {
+        return false;
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    if (argc != 3)
+    if (argc < 4)
     {
-        std::cerr << "Usage: " << argv[0] << " <GCodeFilePath> <PLYFilePath>" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <GCodeFilePath> <OutputFilePath> <extrusionWidth=0.4>" << std::endl;
         return 1;
     }
 
     std::string filePath = argv[1];
-    std::string plyFilePath = argv[2];
+    std::string outputFilePath = argv[2];
+    if (argc >= 4)
+        extrusionWidth = std::stof(argv[3]);
     auto stringLayers = extractStringLayers(filePath);
     std::cout << stringLayers.size() << std::endl;
 
     auto layers = extract3DPointsFromLayers(stringLayers);
 
-    savePointsToPLY(layers, plyFilePath);
-    std::cout << "Saved " << layers.size() << " layers to PLY file: " << plyFilePath << std::endl;
+    if (endsWith(outputFilePath, ".ply"))
+    {
+        savePointsToPLY(layers, outputFilePath);
+        std::cout << "Saved " << layers.size() << " layers to PLY file: " << outputFilePath << std::endl;
+    }
+    else if (endsWith(outputFilePath, ".stl"))
+    {
+        savePointsToSTL(layers, outputFilePath);
+        std::cout << "Saved " << layers.size() << " layers to STL file: " << outputFilePath << std::endl;
+    }
+    else
+    {
+        throw "Cannot save file type";
+    }
 
     return 0;
 }

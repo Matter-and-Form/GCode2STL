@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/bin/GCode2STL", // Change this to your output executable
-            "args": ["/home/drew/data/NGen/50Pieces/GCode/10_Twisted-Vase-Basic.gcode", "/home/drew/Documents/NGEN/GCode to STL/10_Twisted-Vase-Basic.ply"], // Add your arguments here
+            "args": ["${workspaceFolder}/resources/tower.gcode", "${workspaceFolder}/resources/tower.stl", 0.4], // Add your arguments here
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

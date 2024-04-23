@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(GCode2STL VERSION 0.1.0 LANGUAGES C CXX)
+project(GCode2STL VERSION 1.0.0 LANGUAGES C CXX)
 
 # Explicitly set the output directories for all build configurations
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
