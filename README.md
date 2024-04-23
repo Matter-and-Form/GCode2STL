@@ -1,10 +1,18 @@
 # GCode to STL/PLY Converter
+Prusaslicer Viewer      |  GCode2STL STL
+:-------------------------:|:-------------------------:
+![](https://github.com/drewsipher/GCode2STL/assets/1328474/ad195f8c-f8be-47a1-a9db-eb0439458380)  |  ![](https://github.com/drewsipher/GCode2STL/assets/1328474/d5ca6a14-428f-4f23-a062-957f702fb4fe)
+
+
 ## Overview
 This repository contains a C++ application designed to convert GCode files into 3D printable STL or PLY files. It interprets the extruded paths in the GCode, and then renders them each as square tubes using specified layer height and extrusion width parameters. This tool is especially useful for visualizing GCode paths in 3D modeling software. The tool does not currently try to output a STL that mimics the input. If you'd like this feature please drop a comment or submit a PR. 
 
 ## Features
 Convert GCode to STL or PLY: Outputs either STL or PLY files based on the paths defined in a GCode file.
 Extruded Lines as Square Tubes: Converts the extruded lines into square tubes, making use of the layer height and a user-definable extrusion width.
+
+![Screenshot from 2024-04-23 16-08-42](https://github.com/drewsipher/GCode2STL/assets/1328474/ad1b4755-997c-4aff-b664-76b7299e4082)
+
 
 #### No Dependencies
 This project does not rely on any external libraries, making it easy to build and run on any platform supporting C++.
